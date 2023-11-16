@@ -1,19 +1,22 @@
 package com.example.mystory.controller;
 
+import com.example.mystory.config.AuthenticationFacade;
 import com.example.mystory.model.dto.LoginModel;
 import com.example.mystory.service.security.LoginService;
-import com.example.mystory.service.security.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.net.http.HttpRequest;
+
 @RestController
 @RequestMapping("api/v1")
 public class HomeController {
@@ -21,9 +24,11 @@ public class HomeController {
     private AuthenticationManager authenticationManager;
     @Autowired
     LoginService loginService;
+    @Autowired
+    AuthenticationFacade authenticationFacade;
 
-    @PostMapping("/sign-in")
-    public ResponseEntity<String> signIn(@RequestBody LoginModel loginModel) throws Exception {
+    @PostMapping("/public/sign-in")
+    public ResponseEntity<String> signIn(@RequestBody LoginModel loginModel, Authentication authentication) throws Exception {
         String token = loginService.login(loginModel,authenticationManager);
         if (token != null) {
             return new ResponseEntity<>(token, HttpStatus.OK);
@@ -32,10 +37,15 @@ public class HomeController {
         }
     }
 
-    @PostMapping("/sign-up")
+    @PostMapping("/public/sign-up")
     public ResponseEntity signUp(@RequestBody LoginModel loginModel) {
         boolean isSuccess = loginService.signUp(loginModel);
         HttpStatus status = isSuccess ?  HttpStatus.OK : HttpStatus.BAD_REQUEST ;
         return ResponseEntity.status(status).body(status);
     }
+    @GetMapping("/api/test")
+    public ResponseEntity testApi() {
+        return ResponseEntity.status( HttpStatus.OK).body("OK");
+    }
+
 }

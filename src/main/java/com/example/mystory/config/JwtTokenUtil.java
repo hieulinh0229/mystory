@@ -1,8 +1,6 @@
 package com.example.mystory.config;
 
-import com.example.mystory.service.security.UserService;
 import io.jsonwebtoken.*;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,25 +12,24 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.function.Function;
 
-@Slf4j
 @Component
 public class JwtTokenUtil implements Serializable {
     Logger logger = LoggerFactory.getLogger(JwtTokenUtil.class);
-    private static final long serialVersionUID = -2550185165626007488L;
-    public static final long JWT_TOKEN_VALIDITY = 5;
+    private static final long serialVersionUID = 2525325252325L;
     @Value("${value.secret}")
     private String secret;
     @Value("${value.expire-time}")
-    private int expire;
+    private int expireTime;
 
     /**
      * Generate TOKEN
+     *
      * @param authentication
      * @return
      */
     public String generateToken(Authentication authentication) {
         Date now = new Date();
-        Date expireDate = new Date(now.getTime() + expire);
+        Date expireDate = new Date(now.getTime() + expireTime);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
@@ -49,11 +46,32 @@ public class JwtTokenUtil implements Serializable {
      * @return
      */
     public boolean validateToken(String authToken, UserDetails userDetails) {
-
         try {
             Claims claims = getAllClaimsFromToken(authToken);
             final String username = getUsernameFromToken(claims.getSubject());
             return (username.equals(userDetails.getUsername()) && !isTokenExpired(authToken));
+        } catch (MalformedJwtException ex) {
+            logger.error("Invalid JWT token");
+        } catch (ExpiredJwtException ex) {
+            logger.error("Expired JWT token");
+        } catch (UnsupportedJwtException ex) {
+            logger.error("Unsupported JWT token");
+        } catch (IllegalArgumentException ex) {
+            logger.error("JWT claims string is empty.");
+        }
+        return false;
+    }
+
+    /**
+     * Validate token
+     *
+     * @param authToken
+     * @return
+     */
+    public boolean validateToken(String authToken) {
+        try {
+            Claims claims = getAllClaimsFromToken(authToken);
+            return true;
         } catch (MalformedJwtException ex) {
             logger.error("Invalid JWT token");
         } catch (ExpiredJwtException ex) {
