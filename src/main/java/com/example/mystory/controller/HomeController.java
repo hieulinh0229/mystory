@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.http.HttpRequest;
 
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping("public/api/v1")
 public class HomeController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -27,7 +27,7 @@ public class HomeController {
     @Autowired
     AuthenticationFacade authenticationFacade;
 
-    @PostMapping("/public/sign-in")
+    @PostMapping("/sign-in")
     public ResponseEntity<String> signIn(@RequestBody LoginModel loginModel, Authentication authentication) throws Exception {
         String token = loginService.login(loginModel,authenticationManager);
         if (token != null) {
@@ -37,13 +37,13 @@ public class HomeController {
         }
     }
 
-    @PostMapping("/public/sign-up")
+    @PostMapping("/sign-up")
     public ResponseEntity signUp(@RequestBody LoginModel loginModel) {
         boolean isSuccess = loginService.signUp(loginModel);
         HttpStatus status = isSuccess ?  HttpStatus.OK : HttpStatus.BAD_REQUEST ;
         return ResponseEntity.status(status).body(status);
     }
-    @GetMapping("/api/test")
+    @GetMapping("/test")
     public ResponseEntity testApi() {
         return ResponseEntity.status( HttpStatus.OK).body("OK");
     }

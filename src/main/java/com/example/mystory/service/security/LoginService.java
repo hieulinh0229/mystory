@@ -50,7 +50,7 @@ public class LoginService {
             User user = new User();
             user.setUserName(loginModel.getUserName());
             user.setPassword(passwordEncoder.encode(loginModel.getPassword()));
-            user.setRole("ADMIN");
+            user.setRole("ROLE_ADMIN");
             user.setId(1);
             userRepository.save(user);
             return true;

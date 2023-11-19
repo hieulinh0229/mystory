@@ -33,13 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (StringUtils.hasText(jwt)) {
                 if(uri.contains("api")){
                     jwtTokenUtil.validateToken(jwt);
-                }else {
-                    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-                    if (jwtTokenUtil.validateToken(jwt, userDetails)) {
-                        HttpSession session = request.getSession();
-                        session.setAttribute("user",userDetails);
-                    }
+                    return;
                 }
             }
         } catch (Exception e) {

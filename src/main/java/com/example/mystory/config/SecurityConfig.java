@@ -4,6 +4,7 @@ import com.example.mystory.service.security.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,16 +41,24 @@ public class SecurityConfig {
                 .authorizeHttpRequests(rq->{
                     rq.requestMatchers(UrlPattern.permitAllUrl).permitAll();
                     rq.requestMatchers(UrlPattern.AUTH_WHITELIST).permitAll();
+                    rq.requestMatchers(HttpMethod.POST
+                            ,"admin").hasRole("ADMIN");
                     rq.anyRequest().authenticated();
                 })
+                .formLogin()
+                .loginPage("/public/login")
+                .usernameParameter("userName")
+                .passwordParameter("password")
+                .loginProcessingUrl("/public/sign-in")
+                .permitAll()
+                .successForwardUrl("/admin")
+                .failureUrl("/public/login")
+                .and()
                 .cors().disable()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-                .and()
-                .addFilterBefore(jwtAuthenticationFilter,UsernamePasswordAuthenticationFilter.class);
-
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
         return httpSecurity.build();
     }
     @Bean
