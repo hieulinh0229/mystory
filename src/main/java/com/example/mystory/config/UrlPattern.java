@@ -3,7 +3,6 @@ package com.example.mystory.config;
 public final class UrlPattern {
     public final static String permitAllUrl = "public/**";
     public static final String[] AUTH_WHITELIST = {
-            // -- Swagger UI v2
             "/v2/api-docs",
             "/swagger-resources",
             "/swagger-resources/**",

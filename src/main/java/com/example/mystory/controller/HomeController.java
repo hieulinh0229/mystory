@@ -20,15 +20,18 @@ import java.net.http.HttpRequest;
 @RestController
 @RequestMapping("public/api/v1")
 public class HomeController {
-    @Autowired
     private AuthenticationManager authenticationManager;
-    @Autowired
-    LoginService loginService;
-    @Autowired
-    AuthenticationFacade authenticationFacade;
+    private LoginService loginService;
+    private AuthenticationFacade authenticationFacade;
+
+    public HomeController(AuthenticationManager authenticationManager, LoginService loginService, AuthenticationFacade authenticationFacade) {
+        this.authenticationManager = authenticationManager;
+        this.loginService = loginService;
+        this.authenticationFacade = authenticationFacade;
+    }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<String> signIn(@RequestBody LoginModel loginModel, Authentication authentication) throws Exception {
+    public ResponseEntity<String> signIn(@RequestBody @RequestAttribute LoginModel loginModel) throws Exception {
         String token = loginService.login(loginModel,authenticationManager);
         if (token != null) {
             return new ResponseEntity<>(token, HttpStatus.OK);
