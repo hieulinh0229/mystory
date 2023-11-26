@@ -22,12 +22,10 @@ import java.net.http.HttpRequest;
 public class HomeController {
     private AuthenticationManager authenticationManager;
     private LoginService loginService;
-    private AuthenticationFacade authenticationFacade;
 
-    public HomeController(AuthenticationManager authenticationManager, LoginService loginService, AuthenticationFacade authenticationFacade) {
+    public HomeController(AuthenticationManager authenticationManager, LoginService loginService) {
         this.authenticationManager = authenticationManager;
         this.loginService = loginService;
-        this.authenticationFacade = authenticationFacade;
     }
 
     @PostMapping("/sign-in")
