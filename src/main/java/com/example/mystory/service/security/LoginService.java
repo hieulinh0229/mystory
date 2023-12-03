@@ -2,7 +2,7 @@ package com.example.mystory.service.security;
 
 import com.example.mystory.config.JwtTokenUtil;
 import com.example.mystory.model.dto.LoginModel;
-import com.example.mystory.model.entity.User;
+import com.example.mystory.model.entity.Users;
 import com.example.mystory.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,15 +43,14 @@ public class LoginService {
     }
     public boolean signUp(LoginModel loginModel) {
         String userName = loginModel.getUserName();
-        Optional<User> userOptional = userRepository.findByUserName(userName);
+        Optional<Users> userOptional = userRepository.findByUserName(userName);
         if (userOptional.isPresent()) {
             return false;
         } else {
-            User user = new User();
+            Users user = new Users();
             user.setUserName(loginModel.getUserName());
             user.setPassword(passwordEncoder.encode(loginModel.getPassword()));
             user.setRole("ROLE_ADMIN");
-            user.setId(1);
             userRepository.save(user);
             return true;
         }
