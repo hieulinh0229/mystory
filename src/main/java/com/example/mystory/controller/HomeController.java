@@ -29,10 +29,11 @@ public class HomeController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity signUp(@RequestBody LoginModel loginModel) {
+    public ResponseEntity signUp(@RequestBody LoginModel loginModel) throws InterruptedException {
         boolean isSuccess = loginService.signUp(loginModel);
         HttpStatus status = isSuccess ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
-        return new ResponseEntity<>(status, HttpStatus.OK);
+        Thread.sleep(5000);
+        return new ResponseEntity<>("11111111111111111", status);
     }
 
     @GetMapping("/test")
