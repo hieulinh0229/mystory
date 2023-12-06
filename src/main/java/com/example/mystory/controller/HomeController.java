@@ -1,10 +1,13 @@
 package com.example.mystory.controller;
 
 import com.example.mystory.model.dto.LoginModel;
+import com.example.mystory.model.dto.ResponseDto;
 import com.example.mystory.service.security.LoginService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,11 +32,12 @@ public class HomeController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity signUp(@RequestBody LoginModel loginModel) throws InterruptedException {
-        boolean isSuccess = loginService.signUp(loginModel);
-        HttpStatus status = isSuccess ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+    public ResponseEntity<ResponseDto> signUp(@Validated @RequestBody LoginModel loginModel, BindingResult bindingResult) throws InterruptedException {
+
+        ResponseDto responseDto = loginService.signUp(loginModel, bindingResult);
+        HttpStatus status = !responseDto.isError() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         Thread.sleep(5000);
-        return new ResponseEntity<>("11111111111111111", status);
+        return new ResponseEntity<>(responseDto, status);
     }
 
     @GetMapping("/test")
